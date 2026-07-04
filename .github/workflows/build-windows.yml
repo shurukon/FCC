@@ -54,13 +54,13 @@ jobs:
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows_tray\installer.iss
 
       - name: Upload raw app (onedir, unzipped - browsable on the run page)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: FreeClaudeCode-app
           path: dist/Free Claude Code/
 
       - name: Upload installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: FreeClaudeCodeSetup
           path: windows_tray/installer_output/FreeClaudeCodeSetup.exe
