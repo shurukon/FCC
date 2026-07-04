@@ -45,6 +45,7 @@ hidden_imports = [
     "discord",
     "telegram",
     "telegram.ext",
+    "win32_setctime",  # loguru needs this on Windows to set file ctime
 ]
 
 datas = [
