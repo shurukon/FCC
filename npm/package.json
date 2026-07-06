@@ -1,0 +1,28 @@
+{
+  "name": "free-claude-code",
+  "version": "1.0.0",
+  "description": "Free Claude Code proxy as a background service + system tray icon, launched via `fcc start`. Thin launcher: downloads the prebuilt Windows app from this repo's GitHub Releases (see .github/workflows/build-windows.yml) and runs it detached, so it survives the terminal closing.",
+  "bin": {
+    "fcc": "bin/fcc.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "claude-code",
+    "proxy",
+    "tray",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_GITHUB_USERNAME/free-claude-code.git"
+  },
+  "dependencies": {}
+}

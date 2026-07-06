@@ -1,0 +1,74 @@
+name: Build Windows tray app
+
+# Fully hands-off path to a real, natively-built Windows exe + installer:
+# this runs on GitHub's own windows-latest runner (genuine Windows, not a
+# cross-compile), so every dependency - including compiled ones like
+# pydantic-core and tiktoken - resolves to its real Windows wheel.
+#
+# Trigger manually from the Actions tab ("Run workflow") to get downloadable
+# build artifacts on the run page, or push a tag matching "v*" to also
+# publish a GitHub Release with the same files attached - that Release is
+# what npm/lib/github.js downloads for `fcc start` (see npm/README.md).
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install project + build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pyinstaller pystray pillow
+
+      - name: Generate app icon
+        run: python windows_tray/generate_icon.py
+
+      - name: Run PyInstaller
+        run: pyinstaller windows_tray/build.spec --noconfirm --distpath dist --workpath windows_tray/build_work
+
+      - name: Zip the raw app (this is what `fcc start` downloads)
+        run: Compress-Archive -Path "dist/Free Claude Code" -DestinationPath "FreeClaudeCode-windows.zip" -Force
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows_tray\installer.iss
+
+      - name: Upload raw app (onedir, unzipped - browsable on the run page)
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeClaudeCode-app
+          path: dist/Free Claude Code/
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeClaudeCodeSetup
+          path: windows_tray/installer_output/FreeClaudeCodeSetup.exe
+
+      - name: Publish GitHub Release (tag pushes only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            FreeClaudeCode-windows.zip
+            windows_tray/installer_output/FreeClaudeCodeSetup.exe
