@@ -45,6 +45,17 @@ hidden_imports = [
     "discord",
     "telegram",
     "telegram.ext",
+    # loguru needs this on Windows to set file ctime
+    "win32_setctime",
+    # Tray icon dependencies - pystray loads backends dynamically
+    "pystray",
+    "pystray._util",
+    "pystray._util.win32",
+    "pystray._win32",
+    "PIL",
+    "PIL.Image",
+    "PIL.ImageDraw",
+    "PIL.ImageFont",
 ]
 
 datas = [
